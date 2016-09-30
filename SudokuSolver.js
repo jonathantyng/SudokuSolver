@@ -7,6 +7,7 @@ var test2 = "4000008050300000000007000000200000600000804000000100000006030705002
 var test4 = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......";
 var test3 = "52...6.........7.13...........4..8..6......5...........418.........3..2...87.....";
 
+// Hold the initial parsed puzzle
 var grid = {};
 
 // Parse the given string representing a puzzle into a hash map
@@ -247,9 +248,12 @@ function outGrid(grid) {
     }
 }
 
-var starttime = Date.now();
+
 // TESTING
-parseGrid(test4);
+var starttime = Date.now();
+
+parseGrid(test4); // PLACE PUZZLE HERE TO TEST
+
 // Propogate constraints
 for (pos in grid) {
     if (!eliminateValues(grid, pos)) console.log("Invalid grid");
@@ -260,8 +264,9 @@ for (pos in grid) {
         console.log("Invalid grid");
     }
 }
-outGrid(grid);
+outGrid(grid); // output parsed grid
 
+// Solve puzzle
 var newGrid = grid;
 newGrid = searchGrid(grid);
 var endtime = Date.now();
@@ -269,127 +274,3 @@ if (typeof newGrid == 'boolean') console.log('Could not find solution, grid may 
 outGrid(newGrid);
 console.log(endtime - starttime);
 
-
-// go through grid and try possible value
-/*function searchGrid2(grid) {
-    for (pos in grid) {
-        if (grid[pos].length > 1) {
-            console.log("searching possible values for " + pos);
-
-            var possibleValues = grid[pos];
-            var len = possibleValues.length;
-            // go through each possible value and see if it solves the puzzle
-            for (var i = 0; i < len; i++) {
-                // make new copy of grid
-                var newGrid = {};
-                for (p in grid) {
-                    newGrid[p] = grid[p];
-                }
-
-                newGrid[pos] = possibleValues.charAt(i);
-                var valid = eliminateValues(newGrid, pos); // propagate constraints fromnew value
-                //if (valid) valid = eliminate2(newGrid, pos);
-                //var valid = checkGrid(newGrid, pos);
-                if (!valid && i == len - 1) { // IF NOT VALID AND END OF LOOP, GO BACK ONE
-                    //console.log(possibleValues.charAt(i) + " at " + pos + " is not valid");
-                    //newGrid[pos] = possibleValues; // reset possible values in position if they are all invalid
-                    console.log("going back one step from " + pos);
-                    return false; // then go back on step
-                } else if (valid && solved(newGrid)) { // if grid is valid and it is solved
-                    grid = newGrid;
-                    return newGrid;
-                } else if (valid) { // otherwise, if valid but not solved yet, try values in another position
-                    outGrid(newGrid);
-                    newGrid = searchGrid(newGrid);
-                    // if searchGrid returned false, then the current value is invalid
-                    // if this is also the last value being checked, return false
-                    if (typeof newGrid == "boolean" && i == len - 1) {
-                        console.log("going back ANOTHER step from " + pos);
-                        return false;
-                    } else if (typeof newGrid != "boolean") { // if searchGrid returned a grid, then this is the answer
-                        grid = newGrid;
-                        return newGrid;
-                    } else { // otherwise if newGrid is false and this is not the last possible value
-                         console.log("searchGrid invalid, trying " + possibleValues.charAt(i + 1) + " instead of " + possibleValues.charAt(i) + " at pos " + pos);
-                        // otherwise, try another possible value for this position
-                    }
-                } else {
-                    console.log("checking " + possibleValues.charAt(i + 1) + " instead of " + possibleValues.charAt(i) + " at pos " + pos);
-                    // otherwise if grid is invalid, try another possible value
-                }
-            }
-        }
-    }
-
-    return false;
-}*/
-
-/*function searchGrid(grid) {
-    if (solved(grid)) {
-        console.log("solved!");
-        return true;
-    } else {
-        // get the next empty position
-        var next;
-        for (pos in grid) {
-            if (grid[pos].length > 1) next = pos;
-        }
-
-        var possibleValues = grid[next];
-        var len = possibleValues.length;
-        // go through each possible value and see if it solves the puzzle
-        for (var i = 0; i < len; i++) {
-            grid[next] = possibleValues.charAt(i); // put next possible value into position
-            var valid = checkGrid(grid, next);
-
-            if (valid) {
-                //outGrid(grid);
-                valid = searchGrid(grid);
-                if (valid) return valid; // success
-            }
-            grid[next] = possibleValues; // revert position
-        }
-    }
-
-    return false;
-}
-
-// checks if the given position in the grid is valid
-function checkGrid(grid, pos) {
-    var num = grid[pos];
-    var row = pos.charAt(0);
-    var col = pos.charAt(1);
-
-    // check row and column
-    for (var i = 0; i < 9; ++i) {
-        if (grid[row + i].length == 1 && i != col && grid[row + i] == num) {
-            //console.log("not valid at " + pos + " " + row + i);
-            return false;
-        }
-        if (grid[i + col].length == 1 && i != row && grid[i + col] == num) {
-            //console.log("not valid at " + pos + " " + i + col);
-            return false;
-        }
-    }
-
-    // check unit
-    var unitRow = Math.floor(parseInt(row)/3) * 3;
-    var unitCol = Math.floor(parseInt(col)/3) * 3;
-
-    //console.log(".");
-    // go through the 9 unit positions
-    for (var j = 0; j < 3; j++) {
-        for (var k = 0; k < 3; k++) {
-            var newRow = unitRow + j;
-            var newCol = unitCol + k;
-            var newPos = "" + newRow + newCol;
-
-            if (grid[newPos].length == 1 && newPos != pos && grid[newPos] == num) {
-                //console.log("not valid at " + pos + " " + newPos);
-                return false;
-            }
-        }
-    }
-
-    return true;
-}*/
